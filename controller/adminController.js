@@ -2,7 +2,7 @@ import pool from "../database/connection.js";  // Assuming you have a pool conne
 import xlsx from "xlsx"; // For reading Excel files
 import { productfilter } from "../service/adminSevice.js";
 import success from "../middleware/success.js";
-
+ 
 export const Productadd = async (req, res) => {
   try {
     const filePath = req.file.path;
