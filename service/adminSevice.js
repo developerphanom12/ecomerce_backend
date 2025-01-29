@@ -63,23 +63,33 @@ export const insertData = async (data) => {
     });
   };
 
-  export const productfilter = async (category, type, page, limit) => {
+  export const productfilter = async (category, type, page, limit, price) => {
     const offset = (page - 1) * limit;
   
-    const query = `
-      SELECT * FROM ProductListRecord 
-      WHERE category = ? AND type = ? 
-      LIMIT ? OFFSET ?
-    `;
-  
-    const countQuery = `
-      SELECT COUNT(*) AS total FROM ProductListRecord 
+    let query = `
+      SELECT * FROM ProductListRecord
       WHERE category = ? AND type = ?
     `;
+    
+    let countQuery = `
+      SELECT COUNT(*) AS total FROM ProductListRecord
+      WHERE category = ? AND type = ?
+    `;
+    
+    const queryParams = [category, type];
+    if (price) {
+      query += ' AND price = ?';
+      countQuery += ' AND price = ?';
+      queryParams.push(Number(price));
+    }
+  
+    query += ' LIMIT ? OFFSET ?';
+    countQuery += ' LIMIT ? OFFSET ?';
+    queryParams.push(Number(limit), Number(offset));
   
     try {
-      const products = await executeQueryUsers(query, [category, type, Number(limit), Number(offset)]);
-      const totalResult = await executeQueryUsers(countQuery, [category, type]);
+      const products = await executeQueryUsers(query, queryParams);
+      const totalResult = await executeQueryUsers(countQuery, queryParams);
       const total = totalResult[0]?.total || 0;
   
       return { products, total };
@@ -87,4 +97,5 @@ export const insertData = async (data) => {
       throw new Error(`Failed to fetch assigned products: ${err.message}`);
     }
   };
+  
   
