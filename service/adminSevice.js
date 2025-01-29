@@ -5,7 +5,7 @@ import xlsx from "xlsx";
 // Function to create a table in MySQL
 export const createTable = async (columns) => {
   return new Promise((resolve, reject) => {
-    let sql = `CREATE TABLE IF NOT EXISTS productstessss (
+    let sql = `CREATE TABLE IF NOT EXISTS ProductsList (
       id INT AUTO_INCREMENT PRIMARY KEY, `;
 
     // Adding columns dynamically
@@ -49,5 +49,42 @@ export const insertData = async (data) => {
         }
       });
     });
+  };
+  
+  export const  executeQueryUsers = async (query, params) => {
+    return new Promise((resolve, reject) => {
+        pool.query(query, params, (err, results) => {
+        if (err) {
+          reject(new Error(`Database query failed: ${err.message}`));
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  };
+
+  export const productfilter = async (category, type, page, limit) => {
+    const offset = (page - 1) * limit;
+  
+    const query = `
+      SELECT * FROM ProductListRecord 
+      WHERE category = ? AND type = ? 
+      LIMIT ? OFFSET ?
+    `;
+  
+    const countQuery = `
+      SELECT COUNT(*) AS total FROM ProductListRecord 
+      WHERE category = ? AND type = ?
+    `;
+  
+    try {
+      const products = await executeQueryUsers(query, [category, type, Number(limit), Number(offset)]);
+      const totalResult = await executeQueryUsers(countQuery, [category, type]);
+      const total = totalResult[0]?.total || 0;
+  
+      return { products, total };
+    } catch (err) {
+      throw new Error(`Failed to fetch assigned products: ${err.message}`);
+    }
   };
   
