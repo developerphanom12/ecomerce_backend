@@ -1,7 +1,7 @@
 import pool from "../database/connection.js";  // Assuming you have a pool connection to MySQL
 import xlsx from "xlsx"; // For reading Excel files
 import { productfilter } from "../service/adminSevice.js";
-import success from "../middleware/success.js";
+import success from "../response/success.js";
  
 export const Productadd = async (req, res) => {
   try {
@@ -76,10 +76,10 @@ export const ProductList = async (req, res) => {
         
     try {
       const { products, total } = await productfilter(category, type, page, limit,price);
-  //ddd   
       if (products.length > 0) {
         return res.status(200).json({
           status: success.successTrue,
+          message : success.datadetail,
           total,
           currentPage: Number(page),
           totalPages: Math.ceil(total / limit),
