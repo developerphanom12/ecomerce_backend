@@ -72,10 +72,10 @@ export const Productadd = async (req, res) => {
 
 
 export const ProductList = async (req, res) => {
-    const { category, type,price, page = 1, limit = 10 } = req.query;
+    const { category, type,price } = req.query;
         
     try {
-      const { products, total } = await productfilter(category, type, page, limit,price);
+      const { products, total } = await productfilter(category, type,price);
       if (products.length > 0) {
         return res.status(200).json({
           status: success.successTrue,
