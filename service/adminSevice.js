@@ -63,6 +63,32 @@ export const insertData = async (data) => {
     });
   };
 
+  export const productfilterTag = async (tag) => {
+  
+    let query = `
+      SELECT * FROM ProductListRecord
+      WHERE  tag = ?
+    `;
+    
+    let countQuery = `
+      SELECT COUNT(*) AS total FROM ProductListRecord
+      WHERE tag = ?
+    `;
+    
+    const queryParams = [tag];
+   
+    try {
+      const products = await executeQueryUsers(query, queryParams);
+      const totalResult = await executeQueryUsers(countQuery, queryParams);
+      const total = totalResult[0]?.total || 0;
+  
+      return { products, total };
+    } catch (err) {
+      throw new Error(`Failed to fetch assigned products: ${err.message}`);
+    }
+  };
+  
+  
   export const productfilter = async (category, type, page, limit, price) => {
     const offset = (page - 1) * limit;
   
@@ -97,5 +123,3 @@ export const insertData = async (data) => {
       throw new Error(`Failed to fetch assigned products: ${err.message}`);
     }
   };
-  
-  
